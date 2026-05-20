@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>덕담 메시지월</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Marcellus&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="guest-page">
+    <div class="page-shell">
+      <header class="hero">
+        <p class="hero-eyebrow">Wedding Message Wall</p>
+        <h1>영록 그리고 은지에게<br />따뜻한 덕담을 남겨주세요</h1>
+        <p class="hero-copy">
+          하객분들의 한마디가 실시간으로 화면에 올라갑니다.
+        </p>
+      </header>
+
+      <section class="winner-banner card-panel" id="winner-banner" hidden>
+        <p class="winner-badge">추첨 결과</p>
+        <h2><span id="winner-banner-name"></span> 님이 선정되었습니다</h2>
+        <p id="winner-banner-message"></p>
+      </section>
+
+      <main class="guest-layout">
+        <section class="wall-section card-panel">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Live Wall</p>
+              <h2>지금 도착한 축하 메시지</h2>
+            </div>
+            <span class="status-pill is-open" id="guest-status-pill">접수 중</span>
+          </div>
+
+          <div class="message-wall" id="message-wall"></div>
+        </section>
+
+        <section class="form-section card-panel">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Send Message</p>
+              <h2>덕담 남기기</h2>
+            </div>
+          </div>
+
+          <form class="message-form" id="message-form">
+            <label class="field">
+              <span>닉네임</span>
+              <input
+                id="nickname"
+                name="nickname"
+                type="text"
+                maxlength="12"
+                placeholder="예: 민수"
+                required
+              />
+            </label>
+
+            <label class="field">
+              <span>덕담</span>
+              <textarea
+                id="message"
+                name="message"
+                maxlength="120"
+                rows="5"
+                placeholder="신랑 신부에게 전하고 싶은 마음을 적어주세요"
+                required
+              ></textarea>
+            </label>
+
+            <div class="form-meta">
+              <p id="form-status-text">신랑 신부에게 따뜻한 한마디를 남겨주세요.</p>
+              <button class="primary-button" type="submit">덕담 전송하기</button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./guest.js"></script>
+  </body>
+</html>

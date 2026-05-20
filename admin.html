@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>덕담 메시지월 관리자</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Marcellus&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="admin-page">
+    <div class="page-shell">
+      <header class="hero compact">
+        <p class="hero-eyebrow">Host Console</p>
+        <h1>사회자용 덕담 제어 화면</h1>
+        <p class="hero-copy">
+          접수 상태를 바꾸고, 등록된 덕담 중 한 명을 추첨할 수 있습니다.
+        </p>
+      </header>
+
+      <section class="card-panel auth-panel" id="admin-auth-section">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">Admin Access</p>
+            <h2>관리자 비밀번호 입력</h2>
+          </div>
+        </div>
+
+        <form class="message-form" id="admin-auth-form">
+          <label class="field">
+            <span>비밀번호</span>
+            <input id="admin-password" name="password" type="password" placeholder="행사용 관리자 비밀번호" required />
+          </label>
+
+          <div class="form-meta">
+            <p id="admin-login-status">하루짜리 운영용 간단 관리자 비밀번호 방식입니다.</p>
+            <button class="primary-button" type="submit">입장하기</button>
+          </div>
+        </form>
+      </section>
+
+      <main class="admin-layout" id="admin-control-section" hidden>
+        <section class="card-panel admin-control-panel">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Event Control</p>
+              <h2>접수 상태</h2>
+            </div>
+            <span class="status-pill is-open" id="admin-status-pill">접수 중</span>
+          </div>
+
+          <div class="admin-toolbar">
+            <button class="secondary-button" id="toggle-submission-button" type="button">
+              덕담 접수 중지하기
+            </button>
+            <button class="secondary-button" id="sign-out-button" type="button" hidden>
+              로그아웃
+            </button>
+          </div>
+
+          <div class="admin-stats">
+            <div class="stat-box">
+              <span class="stat-label">전체 덕담</span>
+              <strong class="stat-value" id="message-count">0</strong>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">누적 추첨</span>
+              <strong class="stat-value" id="winner-count">0회</strong>
+            </div>
+          </div>
+          <p class="inline-status" id="admin-control-status">관리자 로그인 상태입니다.</p>
+        </section>
+
+        <section class="card-panel admin-draw-panel">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Lucky Draw</p>
+              <h2>랜덤 추첨</h2>
+            </div>
+          </div>
+
+          <button class="primary-button" id="draw-winner-button" type="button">
+            랜덤으로 한 명 선정하기
+          </button>
+
+          <article class="winner-card" id="winner-card">
+            <p class="winner-badge">당첨자 발표</p>
+            <h3 id="winner-name">아직 추첨 전입니다</h3>
+            <p id="winner-message">
+              버튼을 누르면 등록된 덕담 중 하나가 여기 표시됩니다.
+            </p>
+          </article>
+        </section>
+
+        <section class="card-panel admin-list-panel">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Entries</p>
+              <h2>등록된 덕담 목록</h2>
+            </div>
+          </div>
+
+          <div class="admin-message-list" id="admin-message-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./admin.js"></script>
+  </body>
+</html>
