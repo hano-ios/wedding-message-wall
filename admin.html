@@ -10,36 +10,35 @@
       href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Marcellus&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=admin-mobile-6" />
   </head>
   <body class="admin-page">
     <div class="page-shell">
-      <header class="hero compact">
-        <p class="hero-eyebrow">Host Console</p>
-        <h1>사회자용 덕담 제어 화면</h1>
-        <p class="hero-copy">
-          접수 상태를 바꾸고, 등록된 덕담 중 한 명을 추첨할 수 있습니다.
-        </p>
+      <header class="admin-hero">
+        <h1>관리자 제어 화면</h1>
+        <p>비밀번호를 입력하면 접수 제어와 추첨 메뉴가 열립니다.</p>
       </header>
 
       <section class="card-panel auth-panel" id="admin-auth-section">
-        <div class="section-head">
+        <div class="section-head admin-auth-head">
           <div>
-            <p class="section-kicker">Admin Access</p>
             <h2>관리자 비밀번호 입력</h2>
           </div>
         </div>
 
         <form class="message-form" id="admin-auth-form">
-          <label class="field">
-            <span>비밀번호</span>
-            <input id="admin-password" name="password" type="password" placeholder="행사용 관리자 비밀번호" required />
-          </label>
-
-          <div class="form-meta">
-            <p id="admin-login-status">하루짜리 운영용 간단 관리자 비밀번호 방식입니다.</p>
-            <button class="primary-button" type="submit">입장하기</button>
+          <div class="admin-auth-card">
+            <label class="field">
+              <span>비밀번호</span>
+              <input id="admin-password" name="password" type="password" placeholder="관리자 비밀번호" required />
+            </label>
           </div>
+
+          <div class="admin-auth-meta">
+            <p id="admin-login-status"></p>
+          </div>
+
+          <button class="primary-button guest-submit-button admin-submit-button" type="submit">입장하기</button>
         </form>
       </section>
 
@@ -54,10 +53,10 @@
           </div>
 
           <div class="admin-toolbar">
-            <button class="secondary-button" id="toggle-submission-button" type="button">
+            <button class="primary-button admin-action-button" id="toggle-submission-button" type="button">
               덕담 접수 중지하기
             </button>
-            <button class="secondary-button" id="sign-out-button" type="button" hidden>
+            <button class="secondary-button admin-ghost-button" id="sign-out-button" type="button" hidden>
               로그아웃
             </button>
           </div>
@@ -80,10 +79,11 @@
             <div>
               <p class="section-kicker">Lucky Draw</p>
               <h2>랜덤 추첨</h2>
+              <p class="inline-status">덕담 접수를 중지해야 랜덤 추첨이 가능합니다.</p>
             </div>
           </div>
 
-          <button class="primary-button" id="draw-winner-button" type="button">
+          <button class="primary-button admin-action-button" id="draw-winner-button" type="button">
             랜덤으로 한 명 선정하기
           </button>
 
@@ -109,6 +109,6 @@
       </main>
     </div>
 
-    <script type="module" src="./admin.js"></script>
+    <script type="module" src="./admin.js?v=admin-mobile-6"></script>
   </body>
 </html>

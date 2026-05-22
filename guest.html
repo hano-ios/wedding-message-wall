@@ -10,79 +10,83 @@
       href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Marcellus&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=guest-mobile-33" />
   </head>
   <body class="guest-page">
     <div class="page-shell">
-      <header class="hero">
-        <p class="hero-eyebrow">Wedding Message Wall</p>
-        <h1>영록 그리고 은지에게<br />따뜻한 덕담을 남겨주세요</h1>
-        <p class="hero-copy">
-          하객분들의 한마디가 실시간으로 화면에 올라갑니다.
-        </p>
-      </header>
-
-      <section class="winner-banner card-panel" id="winner-banner" hidden>
-        <p class="winner-badge">추첨 결과</p>
-        <h2><span id="winner-banner-name"></span> 님이 선정되었습니다</h2>
-        <p id="winner-banner-message"></p>
-      </section>
-
-      <main class="guest-layout">
-        <section class="wall-section card-panel">
-          <div class="section-head">
-            <div>
-              <p class="section-kicker">Live Wall</p>
-              <h2>지금 도착한 축하 메시지</h2>
-            </div>
-            <span class="status-pill is-open" id="guest-status-pill">접수 중</span>
+      <main class="guest-stage">
+        <section class="guest-wall-section">
+          <div class="guest-wall-copy">
+            <h1>덕담을 남겨주세요</h1>
+            <p>
+              남겨주신 덕담은 저희가 평생 소중하게 가져갈 추억이 될 예정입니다!
+            </p>
           </div>
 
-          <div class="message-wall" id="message-wall"></div>
+          <section class="winner-banner guest-winner-banner" id="winner-banner" hidden>
+            <p class="winner-badge">당첨자</p>
+            <div id="winner-banner-bubble"></div>
+          </section>
+
+          <div class="guest-wall-board" id="message-wall"></div>
+
+          <section class="message-spotlight" id="message-spotlight" hidden>
+            <div class="message-spotlight-card">
+              <p class="winner-badge">새로운 덕담 도착</p>
+              <h2 id="spotlight-name"></h2>
+              <p id="spotlight-message"></p>
+            </div>
+          </section>
+
+          <a class="guest-scroll-cta" href="#guest-form-section">
+            아래로 내려 덕담 남기기
+          </a>
         </section>
 
-        <section class="form-section card-panel">
-          <div class="section-head">
+        <section class="guest-form-section card-panel" id="guest-form-section">
+          <div class="section-head guest-form-head">
             <div>
-              <p class="section-kicker">Send Message</p>
-              <h2>덕담 남기기</h2>
+              <h2>메시지를 남겨주세요.</h2>
             </div>
           </div>
 
           <form class="message-form" id="message-form">
-            <label class="field">
-              <span>닉네임</span>
-              <input
-                id="nickname"
-                name="nickname"
-                type="text"
-                maxlength="12"
-                placeholder="예: 민수"
-                required
-              />
-            </label>
+            <div class="guest-form-card">
+              <label class="field">
+                <span>이름(닉네임)</span>
+                <input
+                  id="nickname"
+                  name="nickname"
+                  type="text"
+                  maxlength="12"
+                  placeholder="예: 민수"
+                  required
+                />
+              </label>
 
-            <label class="field">
-              <span>덕담</span>
-              <textarea
-                id="message"
-                name="message"
-                maxlength="120"
-                rows="5"
-                placeholder="신랑 신부에게 전하고 싶은 마음을 적어주세요"
-                required
-              ></textarea>
-            </label>
-
-            <div class="form-meta">
-              <p id="form-status-text">신랑 신부에게 따뜻한 한마디를 남겨주세요.</p>
-              <button class="primary-button" type="submit">덕담 전송하기</button>
+              <label class="field">
+                <span>메시지</span>
+                <textarea
+                  id="message"
+                  name="message"
+                  maxlength="120"
+                  rows="5"
+                  placeholder="신랑 신부에게 전하고 싶은 마음을 적어주세요"
+                  required
+                ></textarea>
+              </label>
             </div>
+
+            <div class="guest-form-meta-block">
+              <p id="form-status-text"></p>
+            </div>
+
+            <button class="primary-button guest-submit-button" id="submit-button" type="submit">보내기</button>
           </form>
         </section>
       </main>
     </div>
 
-    <script type="module" src="./guest.js"></script>
+    <script type="module" src="./guest.js?v=guest-mobile-33"></script>
   </body>
 </html>

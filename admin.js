@@ -71,6 +71,7 @@ function syncStatusUi() {
   toggleButton.textContent = state.isOpen
     ? "덕담 접수 중지하기"
     : "덕담 접수 다시 열기";
+  drawButton.disabled = state.isOpen;
 }
 
 function syncAuthUi() {
@@ -81,6 +82,8 @@ function syncAuthUi() {
 
   if (hasPasscode) {
     controlStatusElement.textContent = "관리자 로그인 상태입니다.";
+  } else {
+    loginStatusElement.textContent = "";
   }
 }
 
@@ -258,6 +261,11 @@ toggleButton.addEventListener("click", async () => {
 });
 
 drawButton.addEventListener("click", async () => {
+  if (state.isOpen) {
+    controlStatusElement.textContent = "덕담 접수를 마감한 뒤 추첨할 수 있습니다.";
+    return;
+  }
+
   if (!state.entries.length) {
     controlStatusElement.textContent = "등록된 덕담이 없습니다.";
     return;
