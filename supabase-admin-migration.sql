@@ -1,5 +1,59 @@
 create extension if not exists pgcrypto with schema extensions;
 
+alter table public.messages
+add column if not exists client_id text;
+
+update public.messages
+set client_id = gen_random_uuid()::text
+where client_id is null;
+
+alter table public.messages
+alter column client_id set not null;
+
+create unique index if not exists messages_client_id_unique
+on public.messages (client_id);
+
+create unique index if not exists messages_nickname_unique
+on public.messages (lower(trim(nickname)));
+
+create or replace function public.upsert_guest_message(
+  input_client_id text,
+  input_nickname text,
+  input_message text
+)
+returns public.messages
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  saved_message public.messages;
+begin
+  if char_length(trim(input_client_id)) not between 1 and 120 then
+    raise exception 'invalid client id';
+  end if;
+
+  if char_length(trim(input_nickname)) not between 1 and 12 then
+    raise exception 'invalid nickname';
+  end if;
+
+  if char_length(trim(input_message)) not between 1 and 120 then
+    raise exception 'invalid message';
+  end if;
+
+  insert into public.messages (client_id, nickname, message, is_visible)
+  values (trim(input_client_id), trim(input_nickname), trim(input_message), true)
+  on conflict (client_id)
+  do update
+  set nickname = excluded.nickname,
+      message = excluded.message,
+      is_visible = true
+  returning * into saved_message;
+
+  return saved_message;
+end;
+$$;
+
 alter table public.event_settings
 add column if not exists admin_passcode_hash text;
 
@@ -70,3 +124,4 @@ $$;
 grant execute on function public.admin_check_passcode(text) to anon, authenticated;
 grant execute on function public.admin_set_submission_open(text, boolean) to anon, authenticated;
 grant execute on function public.admin_set_winner(text, text, text) to anon, authenticated;
+grant execute on function public.upsert_guest_message(text, text, text) to anon, authenticated;

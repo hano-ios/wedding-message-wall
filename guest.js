@@ -12,6 +12,7 @@ const spotlightElement = document.querySelector("#message-spotlight");
 const spotlightNameElement = document.querySelector("#spotlight-name");
 const spotlightMessageElement = document.querySelector("#spotlight-message");
 
+const CLIENT_ID_STORAGE_KEY = "guestClientId";
 const knownMessageIds = new Set();
 const BASE_LANE_COUNT = 6;
 const SLOTS_PER_LANE = 8;
@@ -21,6 +22,8 @@ let messages = [];
 let hasLoadedMessages = false;
 let spotlightTimerId = null;
 let shouldScrollToSpotlight = false;
+let hasExistingSubmission = false;
+const guestClientId = getOrCreateGuestClientId();
 
 function escapeFallback(message) {
   return message.replace(/[&<>"']/g, (char) => {
@@ -34,6 +37,51 @@ function escapeFallback(message) {
 
     return map[char];
   });
+}
+
+function createGuestClientId() {
+  if (window.crypto?.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+
+  return `guest-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function getOrCreateGuestClientId() {
+  const existingClientId = localStorage.getItem(CLIENT_ID_STORAGE_KEY);
+  if (existingClientId) {
+    return existingClientId;
+  }
+
+  const nextClientId = createGuestClientId();
+  localStorage.setItem(CLIENT_ID_STORAGE_KEY, nextClientId);
+  return nextClientId;
+}
+
+function syncSubmissionStatusMessage() {
+  if (!isOpen) {
+    statusTextElement.textContent = "메시지 접수가 마감되었습니다.";
+    return;
+  }
+
+  if (hasExistingSubmission) {
+    statusTextElement.textContent = "이미 등록한 메시지가 있어요. 다시 보내면 기존 내용이 수정됩니다.";
+    return;
+  }
+
+  statusTextElement.textContent = "";
+}
+
+function syncSubmissionState() {
+  nicknameInput.disabled = !isOpen;
+  messageInput.disabled = !isOpen;
+  submitButton.disabled = !isOpen;
+  submitButton.textContent = isOpen
+    ? hasExistingSubmission
+      ? "수정하기"
+      : "보내기"
+    : "메시지 접수가 마감되었습니다";
+  syncSubmissionStatusMessage();
 }
 
 function buildShuffledIndices(count, seed) {
@@ -170,14 +218,6 @@ function showSpotlight(entry) {
   }, 3800);
 }
 
-function syncSubmissionState() {
-  nicknameInput.disabled = !isOpen;
-  messageInput.disabled = !isOpen;
-  submitButton.disabled = !isOpen;
-  submitButton.textContent = isOpen ? "보내기" : "메시지 접수가 마감되었습니다";
-  statusTextElement.textContent = "";
-}
-
 function renderWinnerBanner(settings) {
   const hasWinner = settings?.winner_nickname && settings?.winner_message;
   winnerBannerElement.hidden = !hasWinner || isOpen;
@@ -261,15 +301,47 @@ async function loadSettings() {
   renderWinnerBanner(data);
 }
 
+async function loadExistingSubmission() {
+  const { data, error } = await supabase
+    .from("messages")
+    .select("nickname, message")
+    .eq("client_id", guestClientId)
+    .eq("is_visible", true)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  hasExistingSubmission = Boolean(data);
+
+  if (data) {
+    nicknameInput.value = data.nickname ?? "";
+    messageInput.value = data.message ?? "";
+  }
+
+  syncSubmissionState();
+}
+
 async function submitMessage(nickname, message) {
-  const { error } = await supabase.from("messages").insert({
-    nickname,
-    message,
+  const { error } = await supabase.rpc("upsert_guest_message", {
+    input_client_id: guestClientId,
+    input_nickname: nickname,
+    input_message: message,
   });
 
   if (error) {
     console.error(error);
-    statusTextElement.textContent = "메시지 전송에 실패했습니다.";
+
+    if (error.code === "23505" && error.message?.includes("messages_nickname_unique")) {
+      statusTextElement.textContent = "이미 등록된 이름입니다. 같은 이름으로는 새로 등록할 수 없습니다.";
+      window.alert("이미 등록된 이름입니다. 다른 이름을 입력해 주세요.");
+      return false;
+    }
+
+    statusTextElement.textContent = "메시지 저장에 실패했습니다.";
+    window.alert("메시지 저장에 실패했습니다. 다시 시도해 주세요.");
     return false;
   }
 
@@ -310,6 +382,7 @@ formElement.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   if (!isOpen) {
+    syncSubmissionState();
     return;
   }
 
@@ -317,12 +390,21 @@ formElement.addEventListener("submit", async (event) => {
   const message = messageInput.value.trim();
 
   if (!nickname || !message) {
-    statusTextElement.textContent = "닉네임과 덕담을 모두 입력해 주세요.";
+    statusTextElement.textContent = "이름과 메시지를 모두 입력해 주세요.";
     return;
   }
 
   if (nickname.length > 12 || message.length > 120) {
     statusTextElement.textContent = "입력 길이를 다시 확인해 주세요.";
+    window.alert("입력 길이를 다시 확인해 주세요.");
+    return;
+  }
+
+  statusTextElement.textContent = hasExistingSubmission ? "메시지를 수정하는 중입니다..." : "메시지를 저장하는 중입니다...";
+  const wasEditingExistingMessage = hasExistingSubmission;
+
+  const didSubmit = await submitMessage(nickname, message);
+  if (!didSubmit) {
     return;
   }
 
@@ -331,22 +413,17 @@ formElement.addEventListener("submit", async (event) => {
     behavior: "smooth",
   });
 
-  statusTextElement.textContent = "전송 중입니다...";
-
-  const didSubmit = await submitMessage(nickname, message);
-  if (!didSubmit) {
-    return;
-  }
-
   shouldScrollToSpotlight = false;
-  formElement.reset();
-  statusTextElement.textContent = "덕담이 등록되었습니다.";
+  hasExistingSubmission = true;
+  syncSubmissionState();
+  statusTextElement.textContent = "메시지가 저장되었습니다.";
+  window.alert(wasEditingExistingMessage ? "메시지가 수정되었습니다." : "메시지가 등록되었습니다.");
 });
 
 async function init() {
   syncSubmissionState();
   renderMessages(messages);
-  await Promise.all([loadMessages(), loadSettings()]);
+  await Promise.all([loadMessages(), loadSettings(), loadExistingSubmission()]);
   subscribeToChanges();
 }
 

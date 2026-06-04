@@ -16,9 +16,10 @@
     <div class="page-shell">
       <header class="hero">
         <p class="hero-eyebrow">Wedding Message Wall</p>
-        <h1>덕담 메시지월 프로토타입</h1>
+        <h1>축하 메시지월 시작 페이지</h1>
         <p class="hero-copy">
-          하객용 화면과 사회자용 화면을 나눠서 먼저 정적 HTML 구조를 잡아둔 상태입니다.
+          하객에게는 메시지 작성 페이지 주소만 전달하고, 이 페이지는 배포 확인이나 연결 테스트용으로만
+          사용해 주세요.
         </p>
       </header>
 
@@ -27,15 +28,16 @@
           <div class="section-head">
             <div>
               <p class="section-kicker">Guest</p>
-              <h2>하객용 사이트</h2>
+              <h2>하객용 페이지</h2>
             </div>
           </div>
           <p class="hero-copy" style="margin: 0; width: 100%;">
-            QR 코드로 연결될 화면입니다. 메시지월 확인과 덕담 입력 폼이 함께 들어 있습니다.
+            QR 코드나 직접 링크로 공유할 주소입니다. 실제 방명 메시지 작성과 확인은 이 페이지에서
+            이루어집니다.
           </p>
           <p style="margin: 20px 0 0;">
             <a class="primary-button" href="./guest.html" style="display: inline-block; text-decoration: none;">
-              하객 화면 열기
+              하객 페이지 열기
             </a>
           </p>
         </section>
@@ -43,20 +45,42 @@
         <section class="card-panel">
           <div class="section-head">
             <div>
-              <p class="section-kicker">Admin</p>
-              <h2>사회자용 사이트</h2>
+              <p class="section-kicker">Notice</p>
+              <h2>개발자분들께</h2>
             </div>
           </div>
           <p class="hero-copy" style="margin: 0; width: 100%;">
-            덕담 접수 상태를 제어하고, 등록자 중 랜덤 추첨 결과를 보여주는 화면입니다.
+            사회자용 주소는 화면에 노출하지 않습니다. 개인적으로만 공유해 주세요.
           </p>
-          <p style="margin: 20px 0 0;">
-            <a class="secondary-button" href="./admin.html" style="display: inline-block; text-decoration: none;">
-              관리자 화면 열기
-            </a>
+          <p class="hero-copy" style="margin: 16px 0 0; width: 100%;">
+            콘솔에서 장난치거나 데이터를 건드리면 신랑신부가 슬퍼집니다. 버그를 찾으셨다면 조용히
+            제보해 주시면 감사하겠습니다.
           </p>
         </section>
       </main>
     </div>
+
+    <script>
+      const consoleBannerStyle = [
+        "background: linear-gradient(135deg, #c56a4a, #8f5a43)",
+        "color: #fffaf4",
+        "padding: 10px 14px",
+        "border-radius: 10px",
+        "font-size: 14px",
+        "font-weight: 700",
+      ].join(";");
+
+      const consoleBodyStyle = [
+        "color: #4b352c",
+        "font-size: 13px",
+        "line-height: 1.7",
+      ].join(";");
+
+      console.log("%c개발자님, 이상한 짓 하지 말아 주세요", consoleBannerStyle);
+      console.log(
+        "%c여기는 축하 메시지 벽입니다.\n신랑신부 행복은 건드리지 말아 주세요.\n버그 제보는 환영하지만 데이터 장난은 마음이 아픕니다.",
+        consoleBodyStyle
+      );
+    </script>
   </body>
 </html>
