@@ -11,59 +11,79 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
+    <style>
+      .developer-gate {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .developer-gate-card {
+        width: min(640px, 100%);
+        padding: 40px 32px;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        border-radius: 32px;
+        background: linear-gradient(180deg, rgba(255, 254, 251, 0.96), rgba(249, 244, 236, 0.96));
+        box-shadow: 0 24px 60px rgba(133, 146, 118, 0.14);
+        text-align: center;
+      }
+
+      .developer-gate-eyebrow {
+        margin: 0 0 14px;
+        color: #7e9e77;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+      }
+
+      .developer-gate-card h1 {
+        margin: 0;
+        color: #3b4a3d;
+        font-family: "Marcellus", serif;
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 400;
+      }
+
+      .developer-gate-copy {
+        margin: 24px 0 0;
+        color: #5f725d;
+        font-size: 1.04rem;
+        line-height: 1.9;
+      }
+
+      .developer-gate-action {
+        margin-top: 28px;
+      }
+
+      .developer-gate-action .primary-button {
+        display: inline-block;
+        text-decoration: none;
+      }
+    </style>
   </head>
   <body>
-    <div class="page-shell">
-      <header class="hero">
-        <p class="hero-eyebrow">Wedding Message Wall</p>
-        <h1>축하 메시지월 시작 페이지</h1>
-        <p class="hero-copy">
-          하객에게는 메시지 작성 페이지 주소만 전달하고, 이 페이지는 배포 확인이나 연결 테스트용으로만
-          사용해 주세요.
+    <main class="developer-gate">
+      <section class="developer-gate-card">
+        <p class="developer-gate-eyebrow">For Developers</p>
+        <h1>개발자분들께:</h1>
+        <p class="developer-gate-copy">
+          혹시나하는 마음에 당부드립니다.
+          <br />
+          제가 의도하지 않은 동작을 테스트하지 말아주세요
+          <br />
+          QA를 거치지 않은 배포라 굉장히 마음이 두렵습니다
         </p>
-      </header>
-
-      <main class="admin-layout">
-        <section class="card-panel">
-          <div class="section-head">
-            <div>
-              <p class="section-kicker">Guest</p>
-              <h2>하객용 페이지</h2>
-            </div>
-          </div>
-          <p class="hero-copy" style="margin: 0; width: 100%;">
-            QR 코드나 직접 링크로 공유할 주소입니다. 실제 방명 메시지 작성과 확인은 이 페이지에서
-            이루어집니다.
-          </p>
-          <p style="margin: 20px 0 0;">
-            <a class="primary-button" href="./guest.html" style="display: inline-block; text-decoration: none;">
-              하객 페이지 열기
-            </a>
-          </p>
-        </section>
-
-        <section class="card-panel">
-          <div class="section-head">
-            <div>
-              <p class="section-kicker">Notice</p>
-              <h2>개발자분들께</h2>
-            </div>
-          </div>
-          <p class="hero-copy" style="margin: 0; width: 100%;">
-            사회자용 주소는 화면에 노출하지 않습니다. 개인적으로만 공유해 주세요.
-          </p>
-          <p class="hero-copy" style="margin: 16px 0 0; width: 100%;">
-            콘솔에서 장난치거나 데이터를 건드리면 신랑신부가 슬퍼집니다. 버그를 찾으셨다면 조용히
-            제보해 주시면 감사하겠습니다.
-          </p>
-        </section>
-      </main>
-    </div>
+        <p class="developer-gate-action">
+          <a class="primary-button" href="./guest.html">모른척 하객용 페이지 열기</a>
+        </p>
+      </section>
+    </main>
 
     <script>
       const consoleBannerStyle = [
-        "background: linear-gradient(135deg, #c56a4a, #8f5a43)",
-        "color: #fffaf4",
+        "background: linear-gradient(135deg, #7e9e77, #9bb794)",
+        "color: #fffef9",
         "padding: 10px 14px",
         "border-radius: 10px",
         "font-size: 14px",
@@ -71,14 +91,14 @@
       ].join(";");
 
       const consoleBodyStyle = [
-        "color: #4b352c",
+        "color: #4f634d",
         "font-size: 13px",
         "line-height: 1.7",
       ].join(";");
 
       console.log("%c개발자님, 이상한 짓 하지 말아 주세요", consoleBannerStyle);
       console.log(
-        "%c여기는 축하 메시지 벽입니다.\n신랑신부 행복은 건드리지 말아 주세요.\n버그 제보는 환영하지만 데이터 장난은 마음이 아픕니다.",
+        "%c여기는 개발자 전용 입구입니다.\n하객 메시지와 운영 데이터는 살살 다뤄 주세요.\n버그 제보는 감사하지만 예기치 않은 테스트는 제 심장에 무리입니다.",
         consoleBodyStyle
       );
     </script>

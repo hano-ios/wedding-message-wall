@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>덕담 메시지월</title>
+    <title>축하 메시지</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Marcellus&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=guest-mobile-33" />
+    <link rel="stylesheet" href="./styles.css?v=guest-mobile-34" />
   </head>
   <body class="guest-page">
     <div class="page-shell">
@@ -19,7 +19,9 @@
           <div class="guest-wall-copy">
             <h1>덕담을 남겨주세요</h1>
             <p>
-              남겨주신 덕담은 저희가 평생 소중하게 가져갈 추억이 될 예정입니다!
+              오늘 이곳에 남겨주신 한마디는 저희 부부의 디지털 방명록으로 보관됩니다.
+              <br />
+              몇 년 뒤 다시 찾아와도, 여러분의 축하를 그대로 만날 수 있습니다.
             </p>
           </div>
 
@@ -32,28 +34,26 @@
 
           <section class="message-spotlight" id="message-spotlight" hidden>
             <div class="message-spotlight-card">
-              <p class="winner-badge">새로운 덕담 도착</p>
+              <p class="winner-badge">새로 도착한 메시지</p>
               <h2 id="spotlight-name"></h2>
               <p id="spotlight-message"></p>
             </div>
           </section>
 
-          <a class="guest-scroll-cta" href="#guest-form-section">
-            아래로 내려 덕담 남기기
-          </a>
+          <a class="guest-scroll-cta" href="#guest-form-section">아래로 내려 덕담 남기기</a>
         </section>
 
         <section class="guest-form-section card-panel" id="guest-form-section">
           <div class="section-head guest-form-head">
             <div>
-              <h2>메시지를 남겨주세요.</h2>
+              <h2>메시지를 남겨주세요</h2>
             </div>
           </div>
 
           <form class="message-form" id="message-form">
             <div class="guest-form-card">
               <label class="field">
-                <span>이름(닉네임)</span>
+                <span>이름/닉네임 (실명을 권장합니다)</span>
                 <input
                   id="nickname"
                   name="nickname"
@@ -71,7 +71,7 @@
                   name="message"
                   maxlength="120"
                   rows="5"
-                  placeholder="신랑 신부에게 전하고 싶은 마음을 적어주세요"
+                  placeholder="신랑 신부에게 전하고 싶은 마음을 적어주세요."
                   required
                 ></textarea>
               </label>
@@ -87,6 +87,6 @@
       </main>
     </div>
 
-    <script type="module" src="./guest.js?v=guest-mobile-33"></script>
+    <script type="module" src="./guest.js?v=guest-mobile-34"></script>
   </body>
 </html>
