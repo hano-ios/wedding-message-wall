@@ -1,6 +1,8 @@
 import { supabase } from "./supabase-client.js";
 
 const wallElement = document.querySelector("#message-wall");
+const guestStageElement = document.querySelector("#guest-stage");
+const guestLoadingScreenElement = document.querySelector("#guest-loading-screen");
 const formElement = document.querySelector("#message-form");
 const statusTextElement = document.querySelector("#form-status-text");
 const nicknameInput = document.querySelector("#nickname");
@@ -17,6 +19,21 @@ const CLIENT_ID_STORAGE_KEY = "guestClientId";
 const BASE_LANE_COUNT = 6;
 const SLOTS_PER_LANE = 8;
 const knownMessageIds = new Set();
+const FEATURED_SLOT_INDEX = 3;
+const FEATURED_MESSAGES = [
+  {
+    laneIndex: 2,
+    themeClass: "avatar-green",
+    nickname: "\uC2E0\uBD80 \uD55C\uC740\uC9C0",
+    message: "\uCC38\uC11D\uD574\uC8FC\uC154\uC11C \uC815\uB9D0 \uAC10\uC0AC\uD569\uB2C8\uB2E4! \uC88B\uC740 \uD558\uB8E8 \uB418\uC138\uC694~",
+  },
+  {
+    laneIndex: 3,
+    themeClass: "avatar-blue",
+    nickname: "\uC2E0\uB791 \uAC15\uC601\uB85D",
+    message: "\uB355\uB2F4\uC740 \uD3C9\uC0DD \uAC04\uC9C1\uD558\uACA0\uC2B5\uB2C8\uB2E4. \uAC10\uC0AC\uD569\uB2C8\uB2E4!",
+  },
+];
 
 const TEXT = {
   submissionsClosed: "\uBA54\uC2DC\uC9C0 \uC811\uC218\uAC00 \uB9C8\uAC10\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
@@ -158,6 +175,23 @@ function renderMessages(items) {
     return board.slice(start, start + SLOTS_PER_LANE);
   });
 
+  FEATURED_MESSAGES.forEach((featuredEntry, featuredIndex) => {
+    if (!lanes[featuredEntry.laneIndex]) {
+      return;
+    }
+
+    lanes[featuredEntry.laneIndex][FEATURED_SLOT_INDEX] = {
+      kind: "message",
+      slotIndex: featuredEntry.laneIndex * SLOTS_PER_LANE + FEATURED_SLOT_INDEX,
+      entry: {
+        nickname: featuredEntry.nickname,
+        message: featuredEntry.message,
+        themeClass: featuredEntry.themeClass,
+      },
+      messageIndex: slotCount + featuredIndex,
+    };
+  });
+
   wallElement.innerHTML = lanes.map((lane, laneIndex) => renderLane(lane, laneIndex)).join("");
 }
 
@@ -184,7 +218,7 @@ function renderSlot(slot, slotIndex) {
   }
 
   const { entry, messageIndex } = slot;
-  const themeClass = getMessageTheme(messageIndex);
+  const themeClass = entry.themeClass ?? getMessageTheme(messageIndex);
   const initials = escapeFallback(entry.nickname.trim().charAt(0).toUpperCase() || "?");
   const lengthClass = entry.message.trim().length > 10 ? "is-expanded" : "";
 
@@ -289,6 +323,11 @@ function renderWinnerBubble(entry) {
       </div>
     </article>
   `;
+}
+
+function finishInitialLoad() {
+  guestLoadingScreenElement.hidden = true;
+  guestStageElement.hidden = false;
 }
 
 async function loadMessages() {
@@ -452,8 +491,8 @@ formElement.addEventListener("submit", async (event) => {
 
 async function init() {
   syncSubmissionState();
-  renderMessages(messages);
   await Promise.all([loadMessages(), loadSettings(), loadExistingSubmission()]);
+  finishInitialLoad();
   subscribeToChanges();
 }
 

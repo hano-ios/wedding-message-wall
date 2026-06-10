@@ -175,6 +175,21 @@ body::after {
   gap: 28px;
 }
 
+.guest-loading-screen {
+  min-height: calc(100vh - 92px);
+  display: grid;
+  place-items: center;
+}
+
+.guest-loading-label {
+  margin: 0;
+  color: #6e7592;
+  font-family: "Gowun Dodum", sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .admin-hero {
   margin-bottom: 24px;
 }
@@ -972,6 +987,10 @@ select:focus {
   gap: 12px;
 }
 
+.admin-draw-toolbar {
+  margin-top: -4px;
+}
+
 .auth-panel {
   margin-bottom: 22px;
 }
@@ -1037,10 +1056,19 @@ select:focus {
 .admin-draw-copy {
   display: grid;
   gap: 4px;
+  padding-top: 8px;
 }
 
 .admin-draw-copy p {
   margin: 0;
+}
+
+.admin-draw-copy-lead {
+  padding: 4px 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #f9f9fb;
+  line-height: 1.45;
 }
 
 .admin-stats {

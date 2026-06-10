@@ -10,11 +10,15 @@
       href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Marcellus&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=guest-mobile-36" />
+    <link rel="stylesheet" href="./styles.css?v=guest-mobile-37" />
   </head>
   <body class="guest-page">
     <div class="page-shell">
-      <main class="guest-stage">
+      <section class="guest-loading-screen" id="guest-loading-screen" aria-live="polite">
+        <p class="guest-loading-label">Loading</p>
+      </section>
+
+      <main class="guest-stage" id="guest-stage" hidden>
         <section class="guest-wall-section">
           <div class="guest-wall-copy">
             <h1>덕담을 남겨주세요</h1>
@@ -87,6 +91,6 @@
       </main>
     </div>
 
-    <script type="module" src="./guest.js?v=guest-mobile-36"></script>
+    <script type="module" src="./guest.js?v=guest-mobile-37"></script>
   </body>
 </html>
