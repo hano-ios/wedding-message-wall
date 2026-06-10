@@ -987,6 +987,15 @@ select:focus {
   gap: 12px;
 }
 
+.admin-toolbar button {
+  min-height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .admin-draw-toolbar {
   margin-top: -4px;
 }
