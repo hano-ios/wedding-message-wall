@@ -1267,6 +1267,13 @@ select:focus {
     width: 100%;
   }
 
+  .admin-toolbar button,
+  .admin-panel-button,
+  .admin-action-button {
+    width: 100%;
+    min-height: 52px;
+  }
+
   .admin-draw-row {
     grid-template-columns: 1fr;
   }
@@ -1312,7 +1319,11 @@ select:focus {
   }
 
   .admin-stats {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-stats .stat-box:first-child {
+    grid-column: 1 / -1;
   }
 
   .message-slot.winner-bubble {
