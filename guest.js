@@ -19,17 +19,19 @@ const CLIENT_ID_STORAGE_KEY = "guestClientId";
 const BASE_LANE_COUNT = 6;
 const SLOTS_PER_LANE = 8;
 const knownMessageIds = new Set();
-const DESKTOP_FEATURED_SLOT_INDEX = 3;
-const MOBILE_FEATURED_SLOT_INDEX = 0;
 const FEATURED_MESSAGES = [
   {
     laneIndex: 2,
+    desktopSlotIndex: 3,
+    mobileSlotIndex: 1,
     themeClass: "avatar-green",
     nickname: "\uC2E0\uBD80 \uD55C\uC740\uC9C0",
     message: "\uCC38\uC11D\uD574\uC8FC\uC154\uC11C \uC815\uB9D0 \uAC10\uC0AC\uD569\uB2C8\uB2E4! \uC88B\uC740 \uD558\uB8E8 \uB418\uC138\uC694~",
   },
   {
     laneIndex: 3,
+    desktopSlotIndex: 3,
+    mobileSlotIndex: 1,
     themeClass: "avatar-blue",
     nickname: "\uC2E0\uB791 \uAC15\uC601\uB85D",
     message: "\uB355\uB2F4\uC740 \uD3C9\uC0DD \uAC04\uC9C1\uD558\uACA0\uC2B5\uB2C8\uB2E4. \uAC10\uC0AC\uD569\uB2C8\uB2E4!",
@@ -118,12 +120,12 @@ function formatPrizeTier(prizeTier) {
   return `${TEXT.winnerTitle} (${label})`;
 }
 
-function getFeaturedSlotIndex() {
+function getFeaturedSlotIndex(featuredEntry) {
   if (window.matchMedia("(max-width: 640px)").matches) {
-    return MOBILE_FEATURED_SLOT_INDEX;
+    return featuredEntry.mobileSlotIndex ?? featuredEntry.desktopSlotIndex ?? 0;
   }
 
-  return DESKTOP_FEATURED_SLOT_INDEX;
+  return featuredEntry.desktopSlotIndex ?? 0;
 }
 
 function syncSubmissionStatusMessage() {
@@ -164,7 +166,6 @@ function buildShuffledIndices(count, seed) {
 function renderMessages(items) {
   const laneCount = Math.max(BASE_LANE_COUNT, Math.ceil(items.length / SLOTS_PER_LANE) || BASE_LANE_COUNT);
   const slotCount = laneCount * SLOTS_PER_LANE;
-  const featuredSlotIndex = getFeaturedSlotIndex();
   const slotOrder = buildShuffledIndices(slotCount, 20260522);
   const board = Array.from({ length: slotCount }, (_unused, slotIndex) => ({
     kind: "empty",
@@ -189,6 +190,8 @@ function renderMessages(items) {
     if (!lanes[featuredEntry.laneIndex]) {
       return;
     }
+
+    const featuredSlotIndex = getFeaturedSlotIndex(featuredEntry);
 
     lanes[featuredEntry.laneIndex][featuredSlotIndex] = {
       kind: "message",
