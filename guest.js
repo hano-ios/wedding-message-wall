@@ -19,7 +19,8 @@ const CLIENT_ID_STORAGE_KEY = "guestClientId";
 const BASE_LANE_COUNT = 6;
 const SLOTS_PER_LANE = 8;
 const knownMessageIds = new Set();
-const FEATURED_SLOT_INDEX = 3;
+const DESKTOP_FEATURED_SLOT_INDEX = 3;
+const MOBILE_FEATURED_SLOT_INDEX = 0;
 const FEATURED_MESSAGES = [
   {
     laneIndex: 2,
@@ -117,6 +118,14 @@ function formatPrizeTier(prizeTier) {
   return `${TEXT.winnerTitle} (${label})`;
 }
 
+function getFeaturedSlotIndex() {
+  if (window.matchMedia("(max-width: 640px)").matches) {
+    return MOBILE_FEATURED_SLOT_INDEX;
+  }
+
+  return DESKTOP_FEATURED_SLOT_INDEX;
+}
+
 function syncSubmissionStatusMessage() {
   if (!isOpen) {
     statusTextElement.textContent = TEXT.submissionsClosed;
@@ -155,6 +164,7 @@ function buildShuffledIndices(count, seed) {
 function renderMessages(items) {
   const laneCount = Math.max(BASE_LANE_COUNT, Math.ceil(items.length / SLOTS_PER_LANE) || BASE_LANE_COUNT);
   const slotCount = laneCount * SLOTS_PER_LANE;
+  const featuredSlotIndex = getFeaturedSlotIndex();
   const slotOrder = buildShuffledIndices(slotCount, 20260522);
   const board = Array.from({ length: slotCount }, (_unused, slotIndex) => ({
     kind: "empty",
@@ -180,9 +190,9 @@ function renderMessages(items) {
       return;
     }
 
-    lanes[featuredEntry.laneIndex][FEATURED_SLOT_INDEX] = {
+    lanes[featuredEntry.laneIndex][featuredSlotIndex] = {
       kind: "message",
-      slotIndex: featuredEntry.laneIndex * SLOTS_PER_LANE + FEATURED_SLOT_INDEX,
+      slotIndex: featuredEntry.laneIndex * SLOTS_PER_LANE + featuredSlotIndex,
       entry: {
         nickname: featuredEntry.nickname,
         message: featuredEntry.message,
