@@ -3,23 +3,77 @@ import { supabase } from "./supabase-client.js";
 const statusPill = document.querySelector("#admin-status-pill");
 const toggleButton = document.querySelector("#toggle-submission-button");
 const messageCountElement = document.querySelector("#message-count");
-const winnerCountElement = document.querySelector("#winner-count");
+const panelCurrentTimeElement = document.querySelector("#panel-current-time");
+const panelTimeDiffElement = document.querySelector("#panel-time-diff");
 const drawButton = document.querySelector("#draw-winner-button");
+const resetWinnersButton = document.querySelector("#reset-winners-button");
+const drawPrizeTierSelect = document.querySelector("#draw-prize-tier");
+const winnerTierBadgeElement = document.querySelector("#winner-tier-badge");
 const winnerNameElement = document.querySelector("#winner-name");
 const winnerMessageElement = document.querySelector("#winner-message");
 const messageListElement = document.querySelector("#admin-message-list");
+const winnerHistoryListElement = document.querySelector("#winner-history-list");
 const authSectionElement = document.querySelector("#admin-auth-section");
 const controlSectionElement = document.querySelector("#admin-control-section");
 const authFormElement = document.querySelector("#admin-auth-form");
 const authPasswordInput = document.querySelector("#admin-password");
 const loginStatusElement = document.querySelector("#admin-login-status");
 const controlStatusElement = document.querySelector("#admin-control-status");
-const signOutButton = document.querySelector("#sign-out-button");
+
+const TEXT = {
+  loginActive: "\uAD00\uB9AC\uC790 \uB85C\uADF8\uC778 \uC0C1\uD0DC\uC785\uB2C8\uB2E4.",
+  noEntriesTitle: "\uC544\uC9C1 \uB4F1\uB85D\uB41C \uB355\uB2F4\uC774 \uC5C6\uC2B5\uB2C8\uB2E4",
+  noEntriesBody: "\uD558\uAC1D\uC774 \uB355\uB2F4\uC744 \uB0A8\uAE30\uBA74 \uC774 \uBAA9\uB85D\uC5D0 \uBC14\uB85C \uD45C\uC2DC\uB429\uB2C8\uB2E4.",
+  open: "\uC811\uC218 \uC911",
+  closed: "\uB9C8\uAC10",
+  stopSubmission: "\uB355\uB2F4 \uC811\uC218 \uC911\uC9C0\uD558\uAE30",
+  openSubmission: "\uB355\uB2F4 \uC811\uC218 \uB2E4\uC2DC \uC5F4\uAE30",
+  loadEntriesFailed: "\uB355\uB2F4 \uBAA9\uB85D\uC744 \uBD88\uB7EC\uC624\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4.",
+  loadSettingsFailed: "\uD589\uC0AC \uC124\uC815\uC744 \uBD88\uB7EC\uC624\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4.",
+  toggleFailed: "\uC811\uC218 \uC0C1\uD0DC \uBCC0\uACBD\uC5D0 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4.",
+  openedSubmission: "\uB355\uB2F4 \uC811\uC218\uB97C \uB2E4\uC2DC \uC5F4\uC5C8\uC2B5\uB2C8\uB2E4.",
+  closedSubmission: "\uB355\uB2F4 \uC811\uC218\uB97C \uC911\uC9C0\uD588\uC2B5\uB2C8\uB2E4.",
+  persistFailed: "\uCD94\uCCA8 \uACB0\uACFC \uC800\uC7A5\uC5D0 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4.",
+  loginFailed: "\uB85C\uADF8\uC778\uC5D0 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4.",
+  invalidPasscode: "\uBE44\uBC00\uBC88\uD638\uAC00 \uC62C\uBC14\uB974\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.",
+  loggedIn: "\uB85C\uADF8\uC778\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+  loggedOut: "\uB85C\uADF8\uC544\uC6C3\uD588\uC2B5\uB2C8\uB2E4.",
+  enterPasscode: "\uBE44\uBC00\uBC88\uD638\uB97C \uC785\uB825\uD574 \uC8FC\uC138\uC694.",
+  loggingIn: "\uB85C\uADF8\uC778 \uC911\uC785\uB2C8\uB2E4...",
+  closeBeforeDraw: "\uB355\uB2F4 \uC811\uC218\uB97C \uB9C8\uAC10\uD55C \uB4A4 \uCD94\uCCA8\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4.",
+  noEntries: "\uB4F1\uB85D\uB41C \uB355\uB2F4\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.",
+  noEligibleEntries: "\uC774\uBBF8 \uBAA8\uB4E0 \uD558\uAC1D\uC774 \uC120\uC815\uB418\uC5B4 \uCD94\uCCA8 \uAC00\uB2A5 \uB300\uC0C1\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.",
+  announcedWinner: "\uB2F9\uCCA8\uC790 \uBC1C\uD45C",
+  selectedBadge: "\uC120\uC815 \uC644\uB8CC",
+  noWinnerHistory: "\uC544\uC9C1 \uC120\uC815\uB41C \uD558\uAC1D\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.",
+  resetConfirm:
+    "\uBAA8\uB4E0 \uC815\uBCF4\uAC00 \uC0AC\uB77C\uC9D1\uB2C8\uB2E4. \uC815\uB9D0 \uD070 \uC774\uC288\uAC00 \uC788\uB294 \uAC8C \uC544\uB2C8\uBA74 \uCD08\uAE30\uD654\uD558\uC9C0 \uB9D0\uC544\uC8FC\uC138\uC694!!!!!",
+  resetFailed: "\uB2F9\uCCA8 \uC815\uBCF4 \uCD08\uAE30\uD654\uC5D0 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4.",
+  resetDone: "\uB2F9\uCCA8 \uC815\uBCF4\uB97C \uCD08\uAE30\uD654\uD588\uC2B5\uB2C8\uB2E4.",
+  winnerDefaultTitle: "\uB2F9\uCCA8\uC790 \uBC1C\uD45C",
+  winnerDefaultName: "\uC544\uC9C1 \uCD94\uCCA8 \uC804\uC785\uB2C8\uB2E4",
+  winnerDefaultMessage:
+    "\uBC84\uD2BC\uC744 \uB204\uB974\uBA74 \uB4F1\uB85D\uB41C \uB355\uB2F4 \uC911 \uD558\uB098\uAC00 \uC5EC\uAE30\uC5D0 \uD45C\uC2DC\uB429\uB2C8\uB2E4.",
+};
+
+const PRIZE_TIER_LABELS = {
+  "1st": "1\uB4F1",
+  "2nd": "2\uB4F1",
+  "3rd": "3\uB4F1",
+};
+
+const timeFormatter = new Intl.DateTimeFormat("ko-KR", {
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: false,
+});
 
 const state = {
   entries: [],
   isOpen: true,
   winnerCount: 0,
+  selectedPrizeTier: drawPrizeTierSelect?.value ?? "1st",
   adminPasscode: sessionStorage.getItem("adminPasscode") ?? "",
   subscriptionsStarted: false,
 };
@@ -38,12 +92,59 @@ function escapeFallback(message) {
   });
 }
 
+function formatPrizeTier(prizeTier) {
+  return PRIZE_TIER_LABELS[prizeTier] ?? PRIZE_TIER_LABELS["1st"];
+}
+
+function updateClock() {
+  const now = new Date();
+  const formattedTime = timeFormatter.format(now);
+  panelCurrentTimeElement.textContent = formattedTime;
+  updateTimeOffset(now);
+}
+
+function updateTimeOffset(now) {
+  const currentHour = now.getHours();
+  if (currentHour < 13 || currentHour >= 15) {
+    panelTimeDiffElement.textContent = "-";
+    return;
+  }
+
+  const target = new Date(now);
+  target.setHours(13, 40, 0, 0);
+  const diffMinutes = Math.floor((now.getTime() - target.getTime()) / 60000);
+
+  if (diffMinutes < 0) {
+    const text = `${Math.abs(diffMinutes)}\uBD84\uC804`;
+    panelTimeDiffElement.textContent = text;
+    return;
+  }
+
+  if (diffMinutes > 0) {
+    const text = `${diffMinutes}\uBD84\uD6C4`;
+    panelTimeDiffElement.textContent = text;
+    return;
+  }
+
+  panelTimeDiffElement.textContent = `0\uBD84`;
+}
+
+function getWinnerHistoryEntries() {
+  return state.entries
+    .filter((entry) => entry.is_winner)
+    .sort((left, right) => new Date(right.winner_selected_at ?? 0) - new Date(left.winner_selected_at ?? 0));
+}
+
+function getEligibleEntries() {
+  return state.entries.filter((entry) => !entry.is_winner);
+}
+
 function renderEntries() {
   if (!state.entries.length) {
     messageListElement.innerHTML = `
       <article class="admin-message-item">
-        <strong>아직 등록된 덕담이 없습니다</strong>
-        <p>하객이 덕담을 남기면 이 목록에 바로 나타납니다.</p>
+        <strong>${TEXT.noEntriesTitle}</strong>
+        <p>${TEXT.noEntriesBody}</p>
       </article>
     `;
     messageCountElement.textContent = "0";
@@ -54,7 +155,10 @@ function renderEntries() {
     .map(
       (entry) => `
         <article class="admin-message-item">
-          <strong>${escapeFallback(entry.nickname)}</strong>
+          <div class="admin-message-head">
+            <strong>${escapeFallback(entry.nickname)}</strong>
+            ${entry.is_winner ? `<span class="admin-message-badge">${formatPrizeTier(entry.winner_prize_tier)} ${TEXT.selectedBadge}</span>` : ""}
+          </div>
           <p>${escapeFallback(entry.message)}</p>
         </article>
       `
@@ -64,71 +168,103 @@ function renderEntries() {
   messageCountElement.textContent = String(state.entries.length);
 }
 
+function renderWinnerHistory() {
+  const winnerHistoryEntries = getWinnerHistoryEntries();
+
+  if (!winnerHistoryEntries.length) {
+    winnerHistoryListElement.innerHTML = `
+      <article class="winner-history-item is-empty">
+        <strong>${TEXT.noWinnerHistory}</strong>
+      </article>
+    `;
+    return;
+  }
+
+  winnerHistoryListElement.innerHTML = winnerHistoryEntries
+    .map(
+      (entry) => `
+        <article class="winner-history-item">
+          <div class="winner-history-row">
+            <span class="winner-history-tier">${formatPrizeTier(entry.winner_prize_tier)}</span>
+            <strong>${escapeFallback(entry.nickname)}</strong>
+          </div>
+          <p>${escapeFallback(entry.message)}</p>
+        </article>
+      `
+    )
+    .join("");
+}
+
 function syncStatusUi() {
-  statusPill.textContent = state.isOpen ? "접수 중" : "마감";
+  statusPill.textContent = state.isOpen ? TEXT.open : TEXT.closed;
   statusPill.classList.toggle("is-open", state.isOpen);
   statusPill.classList.toggle("is-closed", !state.isOpen);
-  toggleButton.textContent = state.isOpen
-    ? "덕담 접수 중지하기"
-    : "덕담 접수 다시 열기";
+  toggleButton.textContent = state.isOpen ? TEXT.stopSubmission : TEXT.openSubmission;
   drawButton.disabled = state.isOpen;
+  drawPrizeTierSelect.disabled = state.isOpen;
 }
 
 function syncAuthUi() {
   const hasPasscode = Boolean(state.adminPasscode);
   authSectionElement.hidden = hasPasscode;
   controlSectionElement.hidden = !hasPasscode;
-  signOutButton.hidden = !hasPasscode;
 
   if (hasPasscode) {
-    controlStatusElement.textContent = "관리자 로그인 상태입니다.";
+    controlStatusElement.textContent = TEXT.loginActive;
   } else {
     loginStatusElement.textContent = "";
   }
 }
 
-function updateWinnerUi(nickname, message) {
+function updateWinnerUi(nickname, message, prizeTier = state.selectedPrizeTier) {
+  winnerTierBadgeElement.textContent = `${formatPrizeTier(prizeTier)} ${TEXT.announcedWinner}`;
   winnerNameElement.textContent = nickname;
   winnerMessageElement.textContent = message;
+}
+
+function resetWinnerUi() {
+  winnerTierBadgeElement.textContent = TEXT.winnerDefaultTitle;
+  winnerNameElement.textContent = TEXT.winnerDefaultName;
+  winnerMessageElement.textContent = TEXT.winnerDefaultMessage;
 }
 
 async function loadEntries() {
   const { data, error } = await supabase
     .from("messages")
-    .select("id, nickname, message, created_at")
+    .select("id, nickname, message, created_at, is_winner, winner_prize_tier, winner_selected_at")
     .eq("is_visible", true)
     .order("created_at", { ascending: false });
 
   if (error) {
     console.error(error);
-    controlStatusElement.textContent = "덕담 목록을 불러오지 못했습니다.";
+    controlStatusElement.textContent = TEXT.loadEntriesFailed;
     return;
   }
 
   state.entries = data ?? [];
   renderEntries();
+  renderWinnerHistory();
 }
 
 async function loadSettings() {
   const { data, error } = await supabase
     .from("event_settings")
-    .select("is_open, winner_nickname, winner_message, winner_count")
+    .select("is_open, winner_nickname, winner_message, winner_count, winner_prize_tier")
     .eq("id", "main")
     .single();
 
   if (error) {
     console.error(error);
-    controlStatusElement.textContent = "행사 설정을 불러오지 못했습니다.";
+    controlStatusElement.textContent = TEXT.loadSettingsFailed;
     return;
   }
 
   state.isOpen = Boolean(data?.is_open);
   state.winnerCount = Number(data?.winner_count ?? 0);
   syncStatusUi();
-  winnerCountElement.textContent = `${state.winnerCount}회`;
 
   if (data?.winner_nickname && data?.winner_message) {
-    updateWinnerUi(data.winner_nickname, data.winner_message);
+    updateWinnerUi(data.winner_nickname, data.winner_message, data.winner_prize_tier ?? state.selectedPrizeTier);
   }
 }
 
@@ -144,13 +280,11 @@ async function setSubmissionOpen(isOpen) {
 
   if (error) {
     console.error(error);
-    controlStatusElement.textContent = "접수 상태 변경에 실패했습니다.";
+    controlStatusElement.textContent = TEXT.toggleFailed;
     return;
   }
 
-  controlStatusElement.textContent = isOpen
-    ? "덕담 접수를 다시 열었습니다."
-    : "덕담 접수를 중지했습니다.";
+  controlStatusElement.textContent = isOpen ? TEXT.openedSubmission : TEXT.closedSubmission;
 }
 
 async function persistWinner(entry) {
@@ -158,16 +292,41 @@ async function persistWinner(entry) {
     input_passcode: state.adminPasscode,
     winner_nickname_input: entry.nickname,
     winner_message_input: entry.message,
+    winner_prize_tier_input: state.selectedPrizeTier,
   });
 
   if (error) {
     console.error(error);
-    controlStatusElement.textContent = "추첨 결과 저장에 실패했습니다.";
+    controlStatusElement.textContent = TEXT.persistFailed;
     return false;
   }
 
   state.winnerCount = Number(data ?? state.winnerCount + 1);
-  winnerCountElement.textContent = `${state.winnerCount}회`;
+  return true;
+}
+
+async function resetWinners() {
+  const { error } = await supabase.rpc("admin_reset_winners", {
+    input_passcode: state.adminPasscode,
+  });
+
+  if (error) {
+    console.error(error);
+    controlStatusElement.textContent = TEXT.resetFailed;
+    return false;
+  }
+
+  state.winnerCount = 0;
+  state.entries = state.entries.map((entry) => ({
+    ...entry,
+    is_winner: false,
+    winner_prize_tier: null,
+    winner_selected_at: null,
+  }));
+  renderEntries();
+  renderWinnerHistory();
+  resetWinnerUi();
+  controlStatusElement.textContent = TEXT.resetDone;
   return true;
 }
 
@@ -178,18 +337,18 @@ async function verifyPasscode(passcode) {
 
   if (error) {
     console.error(error);
-    loginStatusElement.textContent = "로그인에 실패했습니다.";
+    loginStatusElement.textContent = TEXT.loginFailed;
     return;
   }
 
   if (!data) {
-    loginStatusElement.textContent = "비밀번호가 올바르지 않습니다.";
+    loginStatusElement.textContent = TEXT.invalidPasscode;
     return;
   }
 
   state.adminPasscode = passcode;
   sessionStorage.setItem("adminPasscode", passcode);
-  controlStatusElement.textContent = "로그인되었습니다.";
+  controlStatusElement.textContent = TEXT.loggedIn;
   syncAuthUi();
   await refreshDashboard();
   subscribeToChanges();
@@ -199,7 +358,7 @@ async function signOut() {
   state.adminPasscode = "";
   sessionStorage.removeItem("adminPasscode");
   syncAuthUi();
-  loginStatusElement.textContent = "로그아웃되었습니다.";
+  loginStatusElement.textContent = TEXT.loggedOut;
 }
 
 function subscribeToChanges() {
@@ -228,10 +387,13 @@ function subscribeToChanges() {
         state.isOpen = Boolean(payload.new.is_open);
         state.winnerCount = Number(payload.new.winner_count ?? 0);
         syncStatusUi();
-        winnerCountElement.textContent = `${state.winnerCount}회`;
 
         if (payload.new.winner_nickname && payload.new.winner_message) {
-          updateWinnerUi(payload.new.winner_nickname, payload.new.winner_message);
+          updateWinnerUi(
+            payload.new.winner_nickname,
+            payload.new.winner_message,
+            payload.new.winner_prize_tier ?? state.selectedPrizeTier
+          );
         }
       }
     )
@@ -244,16 +406,16 @@ authFormElement.addEventListener("submit", async (event) => {
   const password = authPasswordInput.value.trim();
 
   if (!password) {
-    loginStatusElement.textContent = "비밀번호를 입력해 주세요.";
+    loginStatusElement.textContent = TEXT.enterPasscode;
     return;
   }
 
-  loginStatusElement.textContent = "로그인 중입니다...";
+  loginStatusElement.textContent = TEXT.loggingIn;
   await verifyPasscode(password);
 });
 
-signOutButton.addEventListener("click", () => {
-  signOut();
+drawPrizeTierSelect.addEventListener("change", () => {
+  state.selectedPrizeTier = drawPrizeTierSelect.value;
 });
 
 toggleButton.addEventListener("click", async () => {
@@ -262,25 +424,62 @@ toggleButton.addEventListener("click", async () => {
 
 drawButton.addEventListener("click", async () => {
   if (state.isOpen) {
-    controlStatusElement.textContent = "덕담 접수를 마감한 뒤 추첨할 수 있습니다.";
+    controlStatusElement.textContent = TEXT.closeBeforeDraw;
     return;
   }
 
   if (!state.entries.length) {
-    controlStatusElement.textContent = "등록된 덕담이 없습니다.";
+    controlStatusElement.textContent = TEXT.noEntries;
     return;
   }
 
-  const selected = state.entries[Math.floor(Math.random() * state.entries.length)];
-  updateWinnerUi(selected.nickname, selected.message);
+  const eligibleEntries = getEligibleEntries();
+  if (!eligibleEntries.length) {
+    controlStatusElement.textContent = TEXT.noEligibleEntries;
+    return;
+  }
+
+  const awardedPrizeTier = state.selectedPrizeTier;
+  const selected = eligibleEntries[Math.floor(Math.random() * eligibleEntries.length)];
+  updateWinnerUi(selected.nickname, selected.message, awardedPrizeTier);
 
   const didPersist = await persistWinner(selected);
   if (didPersist) {
-    controlStatusElement.textContent = "추첨 결과를 저장했습니다.";
+    state.entries = state.entries.map((entry) =>
+      entry.id === selected.id
+        ? {
+            ...entry,
+            is_winner: true,
+            winner_prize_tier: awardedPrizeTier,
+            winner_selected_at: new Date().toISOString(),
+          }
+        : entry
+    );
+    renderEntries();
+    renderWinnerHistory();
+    if (awardedPrizeTier === "3rd") {
+      state.selectedPrizeTier = "2nd";
+      drawPrizeTierSelect.value = "2nd";
+    } else if (awardedPrizeTier === "2nd") {
+      state.selectedPrizeTier = "1st";
+      drawPrizeTierSelect.value = "1st";
+    }
+    controlStatusElement.textContent = `${formatPrizeTier(awardedPrizeTier)} ${TEXT.announcedWinner}\uB97C \uC800\uC7A5\uD588\uC2B5\uB2C8\uB2E4.`;
   }
 });
 
+resetWinnersButton.addEventListener("click", async () => {
+  const shouldReset = window.confirm(TEXT.resetConfirm);
+  if (!shouldReset) {
+    return;
+  }
+
+  await resetWinners();
+});
+
 async function init() {
+  updateClock();
+  window.setInterval(updateClock, 1000);
   syncAuthUi();
 
   if (state.adminPasscode) {
@@ -289,9 +488,8 @@ async function init() {
   } else {
     renderEntries();
     syncStatusUi();
-    winnerCountElement.textContent = "0회";
+    resetWinnerUi();
   }
-
 }
 
 init();

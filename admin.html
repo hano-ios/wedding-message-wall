@@ -3,34 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>덕담 메시지월 관리자</title>
+    <title>&#xB355;&#xB2F4; &#xBA54;&#xC2DC;&#xC9C0; &#xAD00;&#xB9AC;&#xC790;</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Marcellus&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=admin-mobile-6" />
+    <link rel="stylesheet" href="./styles.css?v=admin-mobile-13" />
   </head>
   <body class="admin-page">
     <div class="page-shell">
       <header class="admin-hero">
-        <h1>관리자 제어 화면</h1>
-        <p>비밀번호를 입력하면 접수 제어와 추첨 메뉴가 열립니다.</p>
+        <h1>&#xAD00;&#xB9AC;&#xC790; &#xC81C;&#xC5B4; &#xD654;&#xBA74;</h1>
+        <p>
+          &#xBE44;&#xBC00;&#xBC88;&#xD638;&#xB97C; &#xC785;&#xB825;&#xD558;&#xBA74;
+          &#xC811;&#xC218; &#xC81C;&#xC5B4;&#xC640; &#xCD94;&#xCCA8;
+          &#xBA54;&#xB274;&#xAC00; &#xC5F4;&#xB9BD;&#xB2C8;&#xB2E4;.
+        </p>
       </header>
 
       <section class="card-panel auth-panel" id="admin-auth-section">
         <div class="section-head admin-auth-head">
           <div>
-            <h2>관리자 비밀번호 입력</h2>
+            <h2>&#xAD00;&#xB9AC;&#xC790; &#xBE44;&#xBC00;&#xBC88;&#xD638; &#xC785;&#xB825;</h2>
           </div>
         </div>
 
         <form class="message-form" id="admin-auth-form">
           <div class="admin-auth-card">
             <label class="field">
-              <span>비밀번호</span>
-              <input id="admin-password" name="password" type="password" placeholder="관리자 비밀번호" required />
+              <span>&#xBE44;&#xBC00;&#xBC88;&#xD638;</span>
+              <input
+                id="admin-password"
+                name="password"
+                type="password"
+                placeholder="&#xAD00;&#xB9AC;&#xC790; &#xBE44;&#xBC00;&#xBC88;&#xD638;"
+                required
+              />
             </label>
           </div>
 
@@ -38,69 +48,111 @@
             <p id="admin-login-status"></p>
           </div>
 
-          <button class="primary-button guest-submit-button admin-submit-button" type="submit">입장하기</button>
+          <button class="primary-button guest-submit-button admin-submit-button" type="submit">
+            &#xC785;&#xC7A5;&#xD558;&#xAE30;
+          </button>
         </form>
       </section>
 
       <main class="admin-layout" id="admin-control-section" hidden>
         <section class="card-panel admin-control-panel">
           <div class="section-head">
-            <div>
+            <div class="admin-status-head">
               <p class="section-kicker">Event Control</p>
-              <h2>접수 상태</h2>
+              <div class="admin-status-title-row">
+                <h2>&#xC811;&#xC218; &#xC0C1;&#xD0DC;</h2>
+                <span class="admin-status-chip is-open" id="admin-status-pill">
+                  &#xC811;&#xC218; &#xC911;
+                </span>
+              </div>
             </div>
-            <span class="status-pill is-open" id="admin-status-pill">접수 중</span>
           </div>
 
           <div class="admin-toolbar">
             <button class="primary-button admin-action-button" id="toggle-submission-button" type="button">
-              덕담 접수 중지하기
+              &#xB355;&#xB2F4; &#xC811;&#xC218; &#xC911;&#xC9C0;&#xD558;&#xAE30;
             </button>
-            <button class="secondary-button admin-ghost-button" id="sign-out-button" type="button" hidden>
-              로그아웃
+            <button class="admin-panel-button admin-panel-button-danger" id="reset-winners-button" type="button">
+              &#xB2F9;&#xCCA8; &#xC815;&#xBCF4; &#xCD08;&#xAE30;&#xD654;&#xD558;&#xAE30;
             </button>
           </div>
 
           <div class="admin-stats">
             <div class="stat-box">
-              <span class="stat-label">전체 덕담</span>
+              <span class="stat-label">&#xC804;&#xCCB4; &#xB355;&#xB2F4;</span>
               <strong class="stat-value" id="message-count">0</strong>
             </div>
             <div class="stat-box">
-              <span class="stat-label">누적 추첨</span>
-              <strong class="stat-value" id="winner-count">0회</strong>
+              <span class="stat-label">&#xD604;&#xC7AC; &#xC2DC;&#xAC04;</span>
+              <strong class="stat-value" id="panel-current-time">--:--:--</strong>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">&#xC608;&#xC2DD; &#xC2DC;&#xAC04; &#xAE30;&#xC900;</span>
+              <strong class="stat-value" id="panel-time-diff">-</strong>
             </div>
           </div>
-          <p class="inline-status" id="admin-control-status">관리자 로그인 상태입니다.</p>
+          <p class="inline-status" id="admin-control-status">
+            &#xAD00;&#xB9AC;&#xC790; &#xB85C;&#xADF8;&#xC778; &#xC0C1;&#xD0DC;&#xC785;&#xB2C8;&#xB2E4;.
+          </p>
         </section>
 
         <section class="card-panel admin-draw-panel">
           <div class="section-head">
             <div>
               <p class="section-kicker">Lucky Draw</p>
-              <h2>랜덤 추첨</h2>
-              <p class="inline-status">덕담 접수를 중지해야 랜덤 추첨이 가능합니다.</p>
+              <h2>&#xB79C;&#xB364; &#xCD94;&#xCCA8;</h2>
+              <div class="inline-status admin-draw-copy">
+                <p>&#xB355;&#xB2F4; &#xC811;&#xC218;&#xB97C; &#xC911;&#xC9C0;&#xD574;&#xC57C; &#xB79C;&#xB364; &#xCD94;&#xCCA8;&#xC774; &#xAC00;&#xB2A5;&#xD569;&#xB2C8;&#xB2E4;.</p>
+                <p><strong>1&#xB4F1;</strong>: &#xBC1C;&#xBCA0;&#xB2C8; 12&#xB144;&#xC0B0; &#xB354;&#xBE14;&#xC6B0;&#xB4DC;</p>
+                <p><strong>2&#xB4F1;</strong>: &#xBC30;&#xB2EC;&#xC758;&#xBBFC;&#xC871; 5&#xB9CC;&#xC6D0; &#xC0C1;&#xD488;&#xAD8C;</p>
+                <p><strong>3&#xB4F1;</strong>: &#xC2A4;&#xD0E0;&#xB9AC; &#xD140;&#xBE14;&#xB7EC;</p>
+                <p><strong>&#xC815;&#xC131;&#xC0C1;</strong>: &#xD06C;&#xB818;&#xB4DC;&#xB9C8;&#xB871; &#xB9C8;&#xB871;&#xAE00;&#xB77C;&#xC138; 6ps</p>
+              </div>
             </div>
           </div>
 
-          <button class="primary-button admin-action-button" id="draw-winner-button" type="button">
-            랜덤으로 한 명 선정하기
-          </button>
+          <div class="admin-draw-row">
+            <label class="field admin-draw-field" for="draw-prize-tier">
+              <span>&#xCD94;&#xCCA8; &#xC0C1;&#xD488; &#xC120;&#xD0DD;</span>
+              <select id="draw-prize-tier">
+                <option value="1st">1&#xB4F1;</option>
+                <option value="2nd">2&#xB4F1;</option>
+                <option value="3rd" selected>3&#xB4F1;</option>
+              </select>
+            </label>
 
+            <button class="admin-panel-button admin-panel-button-primary" id="draw-winner-button" type="button">
+              &#xB79C;&#xB364;&#xC73C;&#xB85C; &#xD55C; &#xBA85; &#xC120;&#xC815;&#xD558;&#xAE30;
+            </button>
+          </div>
           <article class="winner-card" id="winner-card">
-            <p class="winner-badge">당첨자 발표</p>
-            <h3 id="winner-name">아직 추첨 전입니다</h3>
+            <p class="winner-badge" id="winner-tier-badge">
+              &#xB2F9;&#xCCA8;&#xC790; &#xBC1C;&#xD45C;
+            </p>
+            <h3 id="winner-name">
+              &#xC544;&#xC9C1; &#xCD94;&#xCCA8; &#xC804;&#xC785;&#xB2C8;&#xB2E4;
+            </h3>
             <p id="winner-message">
-              버튼을 누르면 등록된 덕담 중 하나가 여기 표시됩니다.
+              &#xBC84;&#xD2BC;&#xC744; &#xB204;&#xB974;&#xBA74; &#xB4F1;&#xB85D;&#xB41C;
+              &#xB355;&#xB2F4; &#xC911; &#xD558;&#xB098;&#xAC00; &#xC5EC;&#xAE30;&#xC5D0;
+              &#xD45C;&#xC2DC;&#xB429;&#xB2C8;&#xB2E4;.
             </p>
           </article>
+
+          <section class="winner-history">
+            <div class="winner-history-head">
+              <p class="section-kicker">History</p>
+              <h3>&#xC9C0;&#xAE08;&#xAE4C;&#xC9C0; &#xC120;&#xC815;&#xB41C; &#xD558;&#xAC1D;</h3>
+            </div>
+            <div class="winner-history-list" id="winner-history-list"></div>
+          </section>
         </section>
 
         <section class="card-panel admin-list-panel">
           <div class="section-head">
             <div>
               <p class="section-kicker">Entries</p>
-              <h2>등록된 덕담 목록</h2>
+              <h2>&#xB4F1;&#xB85D;&#xB41C; &#xB355;&#xB2F4; &#xBAA9;&#xB85D;</h2>
             </div>
           </div>
 
@@ -109,6 +161,6 @@
       </main>
     </div>
 
-    <script type="module" src="./admin.js?v=admin-mobile-6"></script>
+    <script type="module" src="./admin.js?v=admin-mobile-13"></script>
   </body>
 </html>

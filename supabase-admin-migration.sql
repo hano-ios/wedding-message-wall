@@ -10,6 +10,15 @@ where client_id is null;
 alter table public.messages
 alter column client_id set not null;
 
+alter table public.messages
+add column if not exists is_winner boolean not null default false;
+
+alter table public.messages
+add column if not exists winner_prize_tier text;
+
+alter table public.messages
+add column if not exists winner_selected_at timestamptz;
+
 create unique index if not exists messages_client_id_unique
 on public.messages (client_id);
 
@@ -57,6 +66,9 @@ $$;
 alter table public.event_settings
 add column if not exists admin_passcode_hash text;
 
+alter table public.event_settings
+add column if not exists winner_prize_tier text;
+
 drop policy if exists "authenticated admin can update settings" on public.event_settings;
 
 create or replace function public.admin_check_passcode(input_passcode text)
@@ -95,7 +107,8 @@ $$;
 create or replace function public.admin_set_winner(
   input_passcode text,
   winner_nickname_input text,
-  winner_message_input text
+  winner_message_input text,
+  winner_prize_tier_input text
 )
 returns integer
 language plpgsql
@@ -104,14 +117,35 @@ set search_path = public
 as $$
 declare
   next_winner_count integer;
+  selected_nickname text;
+  selected_message text;
 begin
   if not public.admin_check_passcode(input_passcode) then
     raise exception 'invalid admin passcode';
   end if;
 
+  if winner_prize_tier_input not in ('1st', '2nd', '3rd') then
+    raise exception 'invalid winner prize tier';
+  end if;
+
+  update public.messages
+  set is_winner = true,
+      winner_prize_tier = winner_prize_tier_input,
+      winner_selected_at = now()
+  where lower(trim(nickname)) = lower(trim(winner_nickname_input))
+    and message = winner_message_input
+    and is_visible = true
+    and is_winner = false
+  returning nickname, message into selected_nickname, selected_message;
+
+  if selected_nickname is null or selected_message is null then
+    raise exception 'winner already selected or message not found';
+  end if;
+
   update public.event_settings
-  set winner_nickname = winner_nickname_input,
-      winner_message = winner_message_input,
+  set winner_nickname = selected_nickname,
+      winner_message = selected_message,
+      winner_prize_tier = winner_prize_tier_input,
       winner_count = winner_count + 1,
       updated_at = now()
   where id = 'main'
@@ -121,7 +155,35 @@ begin
 end;
 $$;
 
+create or replace function public.admin_reset_winners(input_passcode text)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not public.admin_check_passcode(input_passcode) then
+    raise exception 'invalid admin passcode';
+  end if;
+
+  update public.messages
+  set is_winner = false,
+      winner_prize_tier = null,
+      winner_selected_at = null
+  where is_winner = true;
+
+  update public.event_settings
+  set winner_nickname = null,
+      winner_message = null,
+      winner_prize_tier = null,
+      winner_count = 0,
+      updated_at = now()
+  where id = 'main';
+end;
+$$;
+
 grant execute on function public.admin_check_passcode(text) to anon, authenticated;
+grant execute on function public.admin_reset_winners(text) to anon, authenticated;
 grant execute on function public.admin_set_submission_open(text, boolean) to anon, authenticated;
-grant execute on function public.admin_set_winner(text, text, text) to anon, authenticated;
+grant execute on function public.admin_set_winner(text, text, text, text) to anon, authenticated;
 grant execute on function public.upsert_guest_message(text, text, text) to anon, authenticated;
