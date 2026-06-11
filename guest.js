@@ -8,9 +8,6 @@ const statusTextElement = document.querySelector("#form-status-text");
 const nicknameInput = document.querySelector("#nickname");
 const messageInput = document.querySelector("#message");
 const submitButton = document.querySelector("#submit-button");
-const winnerBannerElement = document.querySelector("#winner-banner");
-const winnerBannerTitleElement = document.querySelector("#winner-banner-title");
-const winnerBannerBubbleElement = document.querySelector("#winner-banner-bubble");
 const spotlightElement = document.querySelector("#message-spotlight");
 const spotlightNameElement = document.querySelector("#spotlight-name");
 const spotlightMessageElement = document.querySelector("#spotlight-message");
@@ -61,13 +58,6 @@ const TEXT = {
   updatedAlert: "\uBA54\uC2DC\uC9C0\uAC00 \uC218\uC815\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
   createdAlert: "\uBA54\uC2DC\uC9C0\uAC00 \uB4F1\uB85D\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
   spotlightBadge: "\uC0C8\uB85C \uB3C4\uCC29\uD55C \uBA54\uC2DC\uC9C0",
-  winnerTitle: "\uB2F9\uCCA8\uC790",
-};
-
-const PRIZE_TIER_LABELS = {
-  "1st": "1\uB4F1",
-  "2nd": "2\uB4F1",
-  "3rd": "3\uB4F1",
 };
 
 let isOpen = true;
@@ -109,15 +99,6 @@ function getOrCreateGuestClientId() {
   const nextClientId = createGuestClientId();
   localStorage.setItem(CLIENT_ID_STORAGE_KEY, nextClientId);
   return nextClientId;
-}
-
-function formatPrizeTier(prizeTier) {
-  const label = PRIZE_TIER_LABELS[prizeTier];
-  if (!label) {
-    return TEXT.winnerTitle;
-  }
-
-  return `${TEXT.winnerTitle} (${label})`;
 }
 
 function getFeaturedSlotIndex(featuredEntry) {
@@ -301,43 +282,6 @@ function showSpotlight(entry) {
   }, 3800);
 }
 
-function renderWinnerBanner(settings) {
-  const hasWinner = settings?.winner_nickname && settings?.winner_message;
-  winnerBannerElement.hidden = !hasWinner || isOpen;
-
-  if (!hasWinner || isOpen) {
-    winnerBannerTitleElement.textContent = TEXT.winnerTitle;
-    winnerBannerBubbleElement.innerHTML = "";
-    return;
-  }
-
-  const winnerEntry = {
-    nickname: settings.winner_nickname,
-    message: settings.winner_message,
-    prizeTier: settings.winner_prize_tier ?? null,
-  };
-
-  winnerBannerTitleElement.textContent = formatPrizeTier(winnerEntry.prizeTier);
-  winnerBannerBubbleElement.innerHTML = renderWinnerBubble(winnerEntry);
-}
-
-function renderWinnerBubble(entry) {
-  const avatarThemeClass = getMessageTheme(1);
-  const initials = escapeFallback(entry.nickname.trim().charAt(0).toUpperCase() || "?");
-
-  return `
-    <article class="message-slot is-message winner-bubble winner-box ${avatarThemeClass}">
-      <div class="winner-box-body">
-        <span class="message-avatar">${initials}</span>
-        <div class="message-pill-copy winner-pill-copy">
-          <p class="message-pill-author winner-pill-author">${escapeFallback(entry.nickname)}</p>
-          <p class="message-pill-text winner-pill-text">${escapeFallback(entry.message)}</p>
-        </div>
-      </div>
-    </article>
-  `;
-}
-
 function finishInitialLoad() {
   guestLoadingScreenElement.hidden = true;
   guestStageElement.hidden = false;
@@ -376,7 +320,7 @@ async function loadMessages() {
 async function loadSettings() {
   const { data, error } = await supabase
     .from("event_settings")
-    .select("is_open, winner_nickname, winner_message, winner_prize_tier")
+    .select("is_open")
     .eq("id", "main")
     .single();
 
@@ -388,7 +332,6 @@ async function loadSettings() {
 
   isOpen = Boolean(data?.is_open);
   syncSubmissionState();
-  renderWinnerBanner(data);
 }
 
 async function loadExistingSubmission() {
@@ -455,7 +398,6 @@ function subscribeToChanges() {
 
       isOpen = Boolean(payload.new.is_open);
       syncSubmissionState();
-      renderWinnerBanner(payload.new);
     })
     .subscribe();
 }

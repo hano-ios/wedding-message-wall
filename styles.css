@@ -1139,6 +1139,28 @@ select:focus {
   line-height: 1.75;
 }
 
+.admin-reroll-button {
+  justify-self: start;
+  border: 0;
+  padding: 8px 0;
+  color: #8f4a5d;
+  background: transparent;
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.admin-reroll-button:hover {
+  color: #733548;
+  text-decoration: underline;
+}
+
+.admin-reroll-button:disabled {
+  color: #a8adba;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
 .winner-history {
   display: grid;
   gap: 14px;
