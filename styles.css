@@ -1141,24 +1141,39 @@ select:focus {
 
 .admin-reroll-button {
   justify-self: start;
-  border: 0;
-  padding: 8px 0;
+  border: 1px solid rgba(169, 68, 85, 0.22);
+  border-radius: 999px;
+  padding: 10px 16px;
   color: #8f4a5d;
-  background: transparent;
+  background: rgba(255, 246, 249, 0.92);
+  box-shadow: 0 8px 18px rgba(143, 74, 93, 0.12);
   font: inherit;
   font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
   cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .admin-reroll-button:hover {
+  border-color: rgba(169, 68, 85, 0.36);
   color: #733548;
-  text-decoration: underline;
+  background: #fff1f5;
+  box-shadow: 0 10px 22px rgba(143, 74, 93, 0.16);
+  transform: translateY(-1px);
 }
 
 .admin-reroll-button:disabled {
+  border-color: rgba(168, 173, 186, 0.28);
   color: #a8adba;
+  background: rgba(241, 243, 247, 0.78);
+  box-shadow: none;
   cursor: not-allowed;
-  text-decoration: none;
+  transform: none;
 }
 
 .winner-history {
