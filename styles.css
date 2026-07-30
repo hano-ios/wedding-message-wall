@@ -1022,7 +1022,7 @@ select:focus {
 
 .admin-draw-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 4fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 2fr);
   gap: 12px;
   align-items: end;
 }
@@ -1080,6 +1080,20 @@ select:focus {
 
 .admin-panel-button-primary:hover {
   background: #cfd5df;
+}
+
+#draw-winner-button {
+  background: #4f8a57;
+  color: #f7fff8;
+}
+
+#draw-winner-button:hover {
+  background: #44774b;
+}
+
+#draw-winner-button:disabled {
+  background: #8eb596;
+  color: #f7fff8;
 }
 
 .admin-panel-button-danger {
